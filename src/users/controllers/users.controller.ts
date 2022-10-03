@@ -48,4 +48,9 @@ export class UsersController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(+id);
   }
+
+  @Get(':id/tasks')
+  getTask(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getTasks(id);
+  }
 }

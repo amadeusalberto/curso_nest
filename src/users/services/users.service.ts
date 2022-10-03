@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Db } from 'mongodb';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { Order } from '../entities/Order.entity';
-
 import { ProductsService } from '../../products/services/products.service';
 
 @Injectable()
@@ -12,6 +12,7 @@ export class UsersService {
   constructor(
     private productServices: ProductsService,
     private configService: ConfigService,
+    @Inject('MONGO') private database: Db,
   ) {}
 
   private counterId = 1;
@@ -73,6 +74,15 @@ export class UsersService {
       date: new Date(),
       user,
       products: this.productServices.findAll(),
+    };
+  }
+
+  async getTasks(id: number) {
+    const tasksCollection = this.database.collection('task');
+    const tasks = await tasksCollection.find().toArray();
+    return {
+      id,
+      tasks,
     };
   }
 }
